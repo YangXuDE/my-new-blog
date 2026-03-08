@@ -7,7 +7,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+root {
 	/* Light theme – minimalist, photographic, geeky */
 	--accent: #0ea5e9;
 	--accent-soft: rgba(56, 189, 248, 0.15);
@@ -27,7 +27,7 @@
 	color-scheme: light;
 }
 
-:root[data-theme='dark'] {
+root[data-theme='dark'] {
 	/* Dark theme – deep geek black, neon accents, glassmorphism */
 	--accent: #22d3ee;
 	--accent-soft: rgba(56, 189, 248, 0.25);
