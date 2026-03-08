@@ -9,7 +9,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
+	site: 'https://yangxude.github.io/my-new-blog',
+	base: '/my-new-blog',
 	integrations: [
 		tailwind({
 			config: {
