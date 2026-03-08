@@ -67,38 +67,36 @@ const { title, description, image = FallbackImage } = Astro.props;
 
 <!-- Theme bootstrap + dark/light toggle wiring -->
 <script is:inline>
-	{`
-(() => {
-  const storageKey = 'theme';
-  const root = document.documentElement;
+	(() => {
+		const storageKey = 'theme';
+		const root = document.documentElement;
 
-  const getPreferredTheme = () => {
-    if (typeof window === 'undefined') return 'light';
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored === 'light' || stored === 'dark') return stored;
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
-  };
+		const getPreferredTheme = () => {
+			if (typeof window === 'undefined') return 'light';
+			const stored = window.localStorage.getItem(storageKey);
+			if (stored === 'light' || stored === 'dark') return stored;
+			return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+				? 'dark'
+				: 'light';
+		};
 
-  const applyTheme = (theme) => {
-    root.dataset.theme = theme;
-    root.classList.toggle('dark', theme === 'dark');
-  };
+		const applyTheme = (theme) => {
+			root.dataset.theme = theme;
+			root.classList.toggle('dark', theme === 'dark');
+		};
 
-  const initial = getPreferredTheme();
-  applyTheme(initial);
+		const initial = getPreferredTheme();
+		applyTheme(initial);
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.querySelector('[data-theme-toggle]');
-    if (!toggle) return;
+		window.addEventListener('DOMContentLoaded', () => {
+			const toggle = document.querySelector('[data-theme-toggle]');
+			if (!toggle) return;
 
-    toggle.addEventListener('click', () => {
-      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      applyTheme(next);
-      window.localStorage.setItem(storageKey, next);
-    });
-  });
-})();
-`}
+			toggle.addEventListener('click', () => {
+				const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+				applyTheme(next);
+				window.localStorage.setItem(storageKey, next);
+			});
+		});
+	})();
 </script>
