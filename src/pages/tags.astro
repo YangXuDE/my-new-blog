@@ -1,0 +1,134 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+
+const posts = await getCollection('blog');
+
+type TagInfo = { name: string; count: number };
+
+const tagMap = new Map<string, number>();
+for (const post of posts) {
+	const tags = (post.data.tags ?? []) as string[];
+	for (const tag of tags) {
+		tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+	}
+}
+
+const tags: TagInfo[] = Array.from(tagMap.entries())
+	.map(([name, count]) => ({ name, count }))
+	.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${SITE_TITLE} · 标签`} description="博客标签索引" />
+		<style>
+			main {
+				max-width: min(100% - 2.5rem, 960px);
+				margin: 0 auto;
+				padding-top: 3rem;
+			}
+			h1 {
+				margin-bottom: 1.5rem;
+			}
+			.tag-cloud {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				margin: 0 0 2.5rem;
+				padding: 0;
+				list-style: none;
+			}
+			.tag-pill {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				padding: 0.4rem 0.9rem;
+				border-radius: 999px;
+				background: rgba(var(--bg-elevated), 0.9);
+				border: 1px solid rgba(var(--border-subtle), 0.8);
+				box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+				font-size: 0.9rem;
+				cursor: default;
+			}
+			.tag-name {
+				font-weight: 600;
+				color: rgb(var(--black));
+			}
+			.tag-count {
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+			}
+			.empty-hint {
+				margin-bottom: 2rem;
+				color: rgb(var(--gray));
+			}
+			.post-list {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.post-list li {
+				margin-bottom: 0.75rem;
+			}
+			.post-list a {
+				text-decoration: none;
+				color: rgb(var(--black));
+			}
+			.post-list a:hover {
+				color: rgb(var(--accent));
+			}
+			.post-meta {
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>标签</h1>
+
+			{
+				tags.length === 0 ? (
+					<p class="empty-hint">
+						当前还没有为文章配置任何标签，但你仍然可以通过下方列表浏览所有文章。
+					</p>
+				) : (
+					<ul class="tag-cloud">
+						{
+							tags.map((tag) => (
+								<li class="tag-pill">
+									<span class="tag-name">#{tag.name}</span>
+									<span class="tag-count">{tag.count} 篇</span>
+								</li>
+							))
+						}
+					</ul>
+				)
+			}
+
+			<h2>所有文章</h2>
+			<ul class="post-list">
+				{
+					posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+							<span class="post-meta">
+								{post.data.tags && post.data.tags.length > 0
+									? ` · 标签：${post.data.tags.join(', ')}`
+									: ''}
+							</span>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
